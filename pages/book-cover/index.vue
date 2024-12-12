@@ -30,7 +30,7 @@ import CoverImageAdd from "~/components/image/cover-image-add/cover-image-add.vu
 import CoverImagePreview from "~/components/image/cover-image-preview/cover-image-preview.vue";
 
 export default defineComponent({
-  name:'BookCover',
+  name: 'BookCover',
   props: {},
   components: {
     AppTab,
@@ -40,8 +40,8 @@ export default defineComponent({
     CoverImagePreview
   },
   setup(props, {emit}) {
-    const {app, store} = useContext()
-    const bookList = computed(()=>store.state['books'].bookList)
+    const {store} = useContext()
+    const bookList = computed(() => store.state['books'].bookList)
     const currentTab = ref(0)
 
     const selectedBook = computed(() => store.state['books'].selectedBook)
@@ -70,21 +70,16 @@ export default defineComponent({
       store.commit('books/setNextNavigationBtn', true)
     }
 
-    const getSelectedBook2 = (book) => {
-    }
-
     const isCoverImageLoaded = () => {
       store.commit('books/setNextNavigationBtn', true)
     }
 
     const nextTab = () => {
-
       if (currentTab.value === 0) {
         currentTab.value++
       } else if (currentTab.value === 1) {
         currentTab.value++
       }
-
     }
 
     const prevTab = () => {
@@ -99,35 +94,11 @@ export default defineComponent({
       isCoverImageLoaded,
       prevTab,
       nextTab,
-      getSelectedBook2,
       getSelectedBook
     }
-
   },
 });
 </script>
 
 
-<style lang="scss">
-.book-cover-page {
-  .v-slide-group__content {
-    justify-content: center;
-    margin-bottom: 12px;
-  }
-
-  .v-tab {
-    font-weight: bolder;
-    font-size: 20px;
-  }
-
-  .v-tab--active {
-    color: #0359ad !important;
-    font-weight: bolder;
-  }
-
-  .navigation-buttons {
-    display: flex;
-    justify-content: center;
-  }
-}
-</style>
+<style lang="scss" src="./book-cover.scss"/>

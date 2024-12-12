@@ -1,0 +1,21 @@
+.book-cover-page {
+  .v-slide-group__content {
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .v-tab {
+    font-weight: bolder;
+    font-size: 20px;
+  }
+
+  .v-tab--active {
+    color: #0359ad !important;
+    font-weight: bolder;
+  }
+
+  .navigation-buttons {
+    display: flex;
+    justify-content: center;
+  }
+}

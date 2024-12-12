@@ -58,11 +58,10 @@ export default {
 
   setup(props, {emit}) {
     const {route, store} = useContext()
-
-    const disableBtn = ref(false)
-
     const saveBtnText = computed(() => props.crudType === crudTypes.UPDATE ? 'Update' : 'Save')
     const isReadMode=computed(()=>props.crudType===crudTypes.READ)
+
+    const disableBtn = ref(false)
 
     const form = ref({
       firstName: '',
@@ -112,15 +111,11 @@ export default {
       }
     }
 
-
     const addNewUser = async () => {
       try {
-        // Add new user
         await store.dispatch('users/addNewUser', { user: form.value });
-
         await store.dispatch('users/getUsers');
         emit('showDialog', false);
-
       } catch (error) {
         console.error("user add error:", error);
       }
@@ -133,11 +128,8 @@ export default {
           userId: form.value.id,
           userData: form.value
         });
-        //get updated users
         await store.dispatch('users/getUsers');
-
         emit('showDialog', false);
-
       } catch (error) {
         console.error("user update error:", error);
       }
@@ -154,9 +146,7 @@ export default {
     };
   },
 
-
 };
 </script>
-<style lang="scss">
 
-</style>
+<style lang="scss" src="./user-form.scss" />

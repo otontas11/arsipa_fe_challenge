@@ -2,7 +2,7 @@
   v-app
     v-main
       v-container
-        v-btn.justify-center.mr-2(color="blue-grey" v-text="mainPageText"   @click="gotoMainPage" outlined)
+        v-btn.justify-center.mb-2(v-text="mainPageText"   @click="gotoMainPage" outlined)
         Nuxt
 </template>
 
@@ -24,3 +24,6 @@ export default defineComponent({
 
 })
 </script>
+
+
+<style lang="scss"/>
