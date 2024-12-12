@@ -16,10 +16,10 @@
       .cover-container(v-if="imgSrcLogo" )
         v-row
           v-col(cols="12" md="4")
-            b.info.text-center Select a textbox and style the text
-            v-text-field(v-model.number="textFontSize" type="number" label="Font Size")
-            v-text-field(v-model="textLetterSpacing" type="number" label="Letter Spacing")
-            v-color-picker(v-model="textColor" hide-inputs canvas-height="100" label="Title Color")
+            text-style-editor( :font-size="textFontSize" :letter-spacing="textLetterSpacing" :text-color="textColor"
+              @update:fontSize="textFontSize = $event"
+              @update:letterSpacing="textLetterSpacing = $event"
+              @update:textColor="textColor = $event")
 
           v-col(cols="12" md="8")
             .review-image-area.relative.w-100.relative
@@ -33,11 +33,12 @@
 </template>
 
 <script>
-import {ref, onMounted, useContext, watch, computed} from '@nuxtjs/composition-api';
+import {ref, onMounted, useContext, watch, computed, defineComponent} from '@nuxtjs/composition-api';
 import DragDropInput from "~/components/draggable/drag-drop-input/drag-drop-input.vue";
-
-export default {
+import TextStyleEditor from "~/components/editor/text-style-editor/text-style-editor.vue";
+export default defineComponent({
   name: 'CoverImageAdd',
+
   props: {
     selectedBook: {
       type: Object,
@@ -53,7 +54,7 @@ export default {
       default: 0,
     },
   },
-  components: {DragDropInput},
+  components: { DragDropInput ,TextStyleEditor },
   setup(props, {emit}) {
 
     const {store} = useContext()
@@ -172,7 +173,7 @@ export default {
       uploadImage,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" src="./cover-image-add.scss" />
