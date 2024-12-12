@@ -1,7 +1,7 @@
 <template lang="pug">
   .cover-image-preview
     .review-container
-      v-img(ref="previewCanvas" :src="base64CanvasImg" max-width="600" )
+      v-img(ref="previewCanvas" :src="base64CanvasImg" max-width="600"  :key="base64CanvasImg")
       v-btn.justify-center(color="blue-grey" v-text="downloadText" outlined  @click="downloadImage")
         v-icon(v-text="'mdi-download'")
 

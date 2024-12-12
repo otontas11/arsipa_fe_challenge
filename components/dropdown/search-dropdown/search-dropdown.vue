@@ -29,12 +29,16 @@
 </template>
 
 <script>
-import { defineComponent, ref } from '@nuxtjs/composition-api';
+import {defineComponent, ref, useContext} from '@nuxtjs/composition-api';
 export default defineComponent({
   props: {
     items:{
       type:Array,
       default:()=>[],
+    },
+    selectedBook:{
+      type:Object,
+      default:()=>{},
     },
     label: {
       type: String,
@@ -50,7 +54,7 @@ export default defineComponent({
     },
   setup(props, { emit }) {
 
-    const selectedItem = ref({});
+    const selectedItem = ref(props.selectedBook);
 
     const onSelected = (item) => {
       emit('onSelected',item);

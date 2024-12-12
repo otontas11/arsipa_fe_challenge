@@ -1,9 +1,9 @@
 <template lang="pug">
   .book-cover-page
-    v-card.pa-4(elevation="2" height="90vh" )
+    v-card.pa-4(elevation="2"  )
       app-tab(:current-tab="currentTab")
         template(v-slot:tab1="{ tabData }")
-          search-dropdown.my-3(:items="bookList" @onSelected="getSelectedBook" placeholder="Select Book to Edit Cover Page")
+          search-dropdown.my-3(:items="bookList" @onSelected="getSelectedBook" :selectedBook="selectedBook" placeholder="Select Book to Edit Cover Page")
 
         template(v-slot:tab2="{ tabData }")
           cover-image-add.mb-6(:selected-book="selectedBook" @isImageLoaded="isCoverImageLoaded" :current-tab="currentTab")
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import {defineComponent, onMounted, nextTick, useContext, ref, computed} from '@nuxtjs/composition-api';
+import {defineComponent, useContext, ref, computed, useFetch} from '@nuxtjs/composition-api';
 import AppTab from '~/components/tabs/app-tab/app-tab.vue';
 import SearchDropdown from "~/components/dropdown/search-dropdown/search-dropdown.vue";
 import NavigationButtons from "~/components/buttons/navigation-buttons/navigation-buttons.vue";
@@ -41,10 +41,11 @@ export default defineComponent({
   },
   setup(props, {emit}) {
     const {store} = useContext()
-    const bookList = computed(() => store.state['books'].bookList)
     const currentTab = ref(0)
 
+    const bookList = computed(() => store.state['books'].bookList)
     const selectedBook = computed(() => store.state['books'].selectedBook)
+
     const isNextBtnValid = computed(() => {
       if (currentTab.value === 0) {
         return Object.keys(selectedBook.value).length > 0
@@ -52,9 +53,10 @@ export default defineComponent({
         return store.state['books'].isNextNavigationBtnActive && currentTab.value !== 2
     })
 
-    onMounted(async () => {
-      await nextTick();
-      await fetchBookList();
+    const { fetch, fetchState } = useFetch(async () => {
+      if(!bookList.value.length) {
+        await fetchBookList()
+      }
     });
 
     const fetchBookList = async () => {

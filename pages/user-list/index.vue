@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import {nextTick, onMounted, ref } from 'vue'
-import {computed, useContext } from '@nuxtjs/composition-api'
+import {nextTick, onMounted, ref} from 'vue'
+import {computed, useContext, useFetch} from '@nuxtjs/composition-api'
 import UserForm from "~/components/form/user-form/user-form.vue";
 import crudTypes from "~/constants/crudTypes";
 
@@ -39,22 +39,23 @@ export default {
   components: {UserForm},
 
   setup() {
-    const { store} = useContext()
+    const {store} = useContext()
     const dialog = ref(false)
     const dialogDelete = ref(false)
     const selectedUserInfo = ref({})
-    const editText = computed(() => 'Read - Update - Delete')
     const search = ref('');
-    const userList = computed(() => store.state['users'].userList)
     const crudType = ref(crudTypes.CREATE)
 
-    const userFormHeader=computed(()=>{
-      if(crudType.value===crudTypes.CREATE){
+    const editText = computed(() => 'Read - Update - Delete')
+    const userList = computed(() => store.state['users'].userList)
+
+    const userFormHeader = computed(() => {
+      if (crudType.value === crudTypes.CREATE) {
         return 'Add New User'
-      }else  if(crudType.value===crudTypes.UPDATE){
+      } else if (crudType.value === crudTypes.UPDATE) {
         return 'Update User'
-      }else  if(crudType.value===crudTypes.READ){
-        return'User Info'
+      } else if (crudType.value === crudTypes.READ) {
+        return 'User Info'
       }
     })
 
@@ -66,8 +67,7 @@ export default {
       {text: editText.value, value: 'actions', sortable: false},
     ])
 
-    onMounted(async () => {
-      await nextTick()
+    const { fetch, fetchState } = useFetch(async () => {
       await getUserList()
     });
 
@@ -88,7 +88,7 @@ export default {
     const addNewUser = () => {
       crudType.value = crudTypes.CREATE
       dialog.value = true
-      selectedUserInfo.value={}
+      selectedUserInfo.value = {}
     }
 
     const updateUser = (user) => {
@@ -99,7 +99,7 @@ export default {
 
     const deleteUser = async () => {
       try {
-        await store.dispatch('users/deleteSelectedUser', { userId: selectedUserInfo.value?.id });
+        await store.dispatch('users/deleteSelectedUser', {userId: selectedUserInfo.value?.id});
         await store.dispatch('users/getUsers');
         dialog.value = false;
       } catch (error) {
@@ -108,7 +108,7 @@ export default {
     };
 
     const showUserInfo = (user) => {
-      selectedUserInfo.value= {...user}
+      selectedUserInfo.value = {...user}
       crudType.value = crudTypes.READ
       dialog.value = true
     }
@@ -139,4 +139,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./user-list.scss" />
+<style lang="scss" src="./user-list.scss"/>
