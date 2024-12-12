@@ -19,10 +19,12 @@ $ yarn generate
 
 For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
 
-## Special Directories
+## About APIs Changes
+Api file is in  = `/plugins/axios.js
 
-nyt book api = 'https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=FGGGPhWonS3VfGLliRNlUQgjxwhGuyvH';
-docker user api='http://45.147.47.18:8080/api/v1/person' //this can be changed to http://localhost:8080/swagger-ui
+Nyt book api = 'https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=FGGGPhWonS3VfGLliRNlUQgjxwhGuyvH' .
+
+Docker user api='http://45.147.47.18:8080/api/v1/person' //this can be changed to http://localhost:8080/swagger-ui after running docker service
 
 ## Special Directories
 
