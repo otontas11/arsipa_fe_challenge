@@ -3,7 +3,8 @@
     v-container
       v-form(@submit.prevent="registerForm" :disabled="isReadMode")
         v-row(dense)
-          v-col {{header}}
+          v-col
+            b {{header}}
           v-col(cols="12")
             v-row(dense)
               v-col(cols="12" md="6")
@@ -120,7 +121,6 @@ export default {
         console.error("user add error:", error);
       }
     };
-
 
     const updateUser = async () => {
       try {

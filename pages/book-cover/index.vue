@@ -24,7 +24,7 @@
 <script>
 import {defineComponent, onMounted, nextTick, useContext, ref, computed} from '@nuxtjs/composition-api';
 import AppTab from '~/components/tabs/app-tab/app-tab.vue';
-import SearchDropdown from "~/components/tabs/dropdown/search-dropdown/search-dropdown.vue";
+import SearchDropdown from "~/components/dropdown/search-dropdown/search-dropdown.vue";
 import NavigationButtons from "~/components/buttons/navigation-buttons/navigation-buttons.vue";
 import CoverImageAdd from "~/components/image/cover-image-add/cover-image-add.vue";
 import CoverImagePreview from "~/components/image/cover-image-preview/cover-image-preview.vue";

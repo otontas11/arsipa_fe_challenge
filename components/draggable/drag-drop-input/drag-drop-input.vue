@@ -89,22 +89,4 @@ export default {
 };
 </script>
 
-<style>
-.drag-drop-input {
-  position: absolute;
-  cursor: grab;
-  user-select: none;
-  background: rgba(255, 255, 255, 0.5);
-  padding: 2px 5px;
-  border-radius: 5px;
-
-  .input-text {
-    border: 2px black solid;
-    border-radius: 5px;
-    padding: 5px 15px;
-    width: 100%;
-  }
-}
-
-
-</style>
+<style lang="scss" src="./drag-drop-input.scss" />

@@ -1,6 +1,6 @@
 <template lang="pug">
   .search-dropdown
-    label.font-weight-600.font-size-14 {{label}}
+    .font-weight-600.font-size-16 {{label}}
     v-autocomplete(
       :value="selectedItem"
       :items="items"
@@ -65,29 +65,5 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-.search-dropdown {
-  margin: 20px auto;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-family: 'Roboto', sans-serif;
-
-  label {
-    display: block;
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  .selection {
-    color: #333;
-    font-weight: 500;
-  }
-
-}
-
-</style>
+<style lang="scss" src="./search-dropdown.scss" />
 

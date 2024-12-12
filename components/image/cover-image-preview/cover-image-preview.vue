@@ -40,65 +40,6 @@ export default defineComponent({
 
 </script>
 
-<style>
-.cover-image-preview {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+<style lang="scss" src="./cover-image-preview.scss">
 
-  .review-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #ffffff;
-    border-radius: 10px;
-    overflow: hidden;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  v-img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
-
-  v-btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #ffffff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  v-btn:hover {
-    background-color: #0056b3;
-  }
-
-  @media (max-width: 768px) {
-    .review-container {
-      padding: 15px;
-    }
-
-    v-btn {
-      font-size: 14px;
-      padding: 8px 16px;
-    }
-  }
-
-}
 </style>

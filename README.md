@@ -21,6 +21,11 @@ For detailed explanation on how things work, check out the [documentation](https
 
 ## Special Directories
 
+nyt book api = 'https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=FGGGPhWonS3VfGLliRNlUQgjxwhGuyvH';
+docker user api='http://45.147.47.18:8080/api/v1/person' //this can be changed to http://localhost:8080/swagger-ui
+
+## Special Directories
+
 You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
 
 ### `assets`

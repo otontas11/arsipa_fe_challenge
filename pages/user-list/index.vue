@@ -23,8 +23,8 @@
               v-spacer
               v-btn.font-size-20(color="#ce2b2b" x-large text @click='deleteUser') Delete User
           //add + update + show user
-          v-card(v-else)
-            user-form(header="Add New User" :user-info="selectedUserInfo" :crudType="crudType" @showDialog="showDialog")
+          v-card.px-4(v-else)
+            user-form(:header="userFormHeader" :user-info="selectedUserInfo" :crudType="crudType" @showDialog="showDialog")
 
 </template>
 
@@ -47,6 +47,16 @@ export default {
     const search = ref('');
     const userList = computed(() => store.state['users'].userList)
     const crudType = ref(crudTypes.CREATE)
+
+    const userFormHeader=computed(()=>{
+      if(crudType.value===crudTypes.CREATE){
+        return 'Add New User'
+      }else  if(crudType.value===crudTypes.UPDATE){
+        return 'Update User'
+      }else  if(crudType.value===crudTypes.READ){
+        return'User Info'
+      }
+    })
 
     const headers = ref([
       {text: 'Name', value: 'firstName', sortable: false},
@@ -115,6 +125,7 @@ export default {
       dialogDelete,
       selectedUserInfo,
       crudType,
+      userFormHeader,
       crudTypes,
       updateUser,
       openDeleteDialog,
