@@ -1,107 +1,21 @@
+// Root styles for the user list table
 .user-list-table {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-
-  tr {
-    td {
-      font-size: 18px;
-      color: #333;
-      padding: 12px;
-      text-align: left;
-    }
-
-    th {
-      font-size: 20px;
-      font-weight: 600;
-      color: #555;
-      text-align: left;
-      background-color: #eaeaea;
-      padding: 16px;
-    }
-
-    &:hover {
-      background-color: #f0f0f0;
-    }
-  }
-
-  .v-data-table-header-mobile {
-    display: none;
-  }
-
-  .v-application--is-ltr .v-data-footer__pagination {
-    margin: 0 !important;
-  }
-}
-
-/* Styling for table actions */
-.user-list-table .v-icon {
-  cursor: pointer;
-  font-size: 24px;
-  transition: color 0.3s;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  &.mr-8 {
-    margin-right: 8px;
-  }
-}
-
-/* Dialog styles */
-.v-dialog {
   .v-card {
     border-radius: 8px;
-    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
 
-    .v-card-title {
-      background-color: #0056ae;
-      color: white;
-      padding: 16px;
-      font-size: 18px;
-      font-weight: bold;
-      text-align: center;
-    }
+  .v-card-title {
+    color: #0056ae;
+    font-weight: bold;
+  }
 
-    .v-card-actions {
-      justify-content: flex-end;
-      padding: 16px;
+  .pa-4 {
+    padding: 16px;
+  }
 
-      .v-btn {
-        font-size: 16px;
-        padding: 10px 16px;
-        margin-left: 8px;
-      }
-
-      .v-btn[color="#ce2b2b"] {
-        background-color: #ce2b2b;
-        color: white;
-        border-radius: 4px;
-
-        &:hover {
-          background-color: #a12222;
-        }
-      }
-    }
+  .font-size-20 {
+    font-size: 20px !important;
   }
 }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-  .user-list-table {
-    tr {
-      td, th {
-        font-size: 16px;
-        padding: 8px;
-      }
-    }
-
-    .v-icon {
-      font-size: 20px;
-    }
-
-    .v-btn {
-      font-size: 14px;
-    }
-  }
-}

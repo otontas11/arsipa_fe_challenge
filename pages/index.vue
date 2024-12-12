@@ -5,7 +5,6 @@
       .buttons.d-flex.justify-center
         v-btn.justify-center.mr-2(color="blue-grey" v-text="userPageText" outlined  @click="gotoUserPage")
         v-btn.justify-center(color="blue-grey" v-text="bookPageText" outlined  @click="gotoBookPage")
-
 </template>
 
 <script>

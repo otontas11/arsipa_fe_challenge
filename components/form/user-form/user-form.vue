@@ -4,7 +4,7 @@
       v-form(@submit.prevent="registerForm" :disabled="isReadMode")
         v-row(dense)
           v-col
-            b {{header}}
+            b.d-flex.justify-center.text-uppercase {{header}}
           v-col(cols="12")
             v-row(dense)
               v-col(cols="12" md="6")
@@ -20,14 +20,14 @@
                 span City
                 v-text-field(v-model="form.city"  outlined placeholder="City" hide-details)
               v-col(cols="12" md="6")
-                span Street Address
-                v-text-field(v-model="form.streetAddress" outlined placeholder="Street Address" hide-details )
-              v-col(cols="12" md="6")
                 span House Number
                 v-text-field(v-model="form.houseNumber"  outlined placeholder="House Number" hide-details)
               v-col(cols="12" md="6")
                 span Zip
                 v-text-field(v-model="form.zip"  outlined placeholder="Zip Number" hide-details)
+              v-col(cols="12")
+                span Street Address
+                v-text-field(v-model="form.streetAddress" outlined placeholder="Street Address" hide-details )
 
           v-col.d-flex.justify-center( v-if="!isReadMode")
             v-btn( color="primary" x-large block v-text="saveBtnText" type="submit" height="48" )
@@ -35,7 +35,7 @@
 
 <script>
 import {onMounted, ref, watch} from 'vue'
-import {computed, useContext } from '@nuxtjs/composition-api'
+import {computed, useContext} from '@nuxtjs/composition-api'
 import crudTypes from "~/constants/crudTypes";
 
 export default {
@@ -58,9 +58,10 @@ export default {
   },
 
   setup(props, {emit}) {
-    const {route, store} = useContext()
+    const {store} = useContext()
+
     const saveBtnText = computed(() => props.crudType === crudTypes.UPDATE ? 'Update' : 'Save')
-    const isReadMode=computed(()=>props.crudType===crudTypes.READ)
+    const isReadMode = computed(() => props.crudType === crudTypes.READ)
 
     const disableBtn = ref(false)
 
@@ -91,7 +92,7 @@ export default {
       }
     }
 
-    const resetForm=()=> {
+    const resetForm = () => {
       form.value = {
         firstName: '',
         lastName: '',
@@ -114,7 +115,7 @@ export default {
 
     const addNewUser = async () => {
       try {
-        await store.dispatch('users/addNewUser', { user: form.value });
+        await store.dispatch('users/addNewUser', {user: form.value});
         await store.dispatch('users/getUsers');
         emit('showDialog', false);
       } catch (error) {
@@ -149,4 +150,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./user-form.scss" />
+<style lang="scss" src="./user-form.scss"/>
