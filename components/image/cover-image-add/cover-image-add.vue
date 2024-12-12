@@ -10,7 +10,7 @@
             span.font-weight-500.red--text.mr-1 Author :
             span.font-weight-600 {{ selectedBook.author }}
 
-        v-btn.justify-center(color="blue-grey" v-text="`${imgSrcLogo?'Change Cover İmage':label}`" outlined  @click="openFileInput"  )
+        v-btn.justify-center(color="blue-grey" v-text="`${imgSrcLogo?'Change Cover İmage':label}`" outlined  @click="triggerFileInputClick"  )
           v-icon(right dark v-text="'mdi-cloud-upload'")
 
       .cover-container(v-if="imgSrcLogo" )
@@ -18,7 +18,7 @@
           v-col(cols="12" md="4")
             text-style-editor(
               :custom-style="activeSelectedInput==='book_title'?computedTitleStyle:computedAuthorStyle"
-              @update="changeActiveInputTextStyle"
+              @update="updateActiveFieldTextStyle"
             )
 
           v-col(cols="12" md="8")
@@ -26,15 +26,15 @@
               nuxt-img.review-book-cover(:src="imgSrcLogo"  :key="imgSrcLogo")
 
               drag-drop-input(v-model="editableBookTitle" :custom-style="computedTitleStyle" label="Book title"
-                :initialPosition="titleTextPosition" @click.native="changeActiveInput('book_title')"
+                :initialPosition="titleTextPosition" @click.native="setActiveEditableField('book_title')"
                 @update:position="(newPos) => titleTextPosition = newPos")
 
               drag-drop-input(v-model="editableBookAuthor" :custom-style="computedAuthorStyle" label="Author name"
-                :initialPosition="authorTextPosition" @click.native="changeActiveInput('author_title')"
+                :initialPosition="authorTextPosition" @click.native="setActiveEditableField('author_title')"
                 @update:position="(newPos) => authorTextPosition = newPos")
 
       //- Hidden File Input
-      input(ref="fileInputRef" type="file" accept="image/*" hidden @change="uploadImage")
+      input(ref="fileInputRef" type="file" accept="image/*" hidden @change="handleImageUpload")
 
 </template>
 
@@ -112,7 +112,7 @@ export default defineComponent({
     watch(() => props.currentTab, () => {
       //drawPreview if goes to 3.tab
       if (props.currentTab === 2) {
-        saveForReview()
+        generatePreviewCanvas()
       }
     })
 
@@ -121,7 +121,7 @@ export default defineComponent({
       editableBookAuthor.value = (props.selectedBook.author);
     })
 
-    const changeActiveInputTextStyle = (styles) => {
+    const updateActiveFieldTextStyle = (styles) => {
       if (activeSelectedInput.value === 'book_title') {
         bookTitleStyle.titleTextColor = styles.textColor
         bookTitleStyle.titleFontSize = styles.fontSize
@@ -133,13 +133,13 @@ export default defineComponent({
       }
     }
 
-    const changeActiveInput = (inputName) => {
+    const setActiveEditableField = (inputName) => {
       activeEditableField.value = inputName
     }
 
-    const openFileInput = () => fileInputRef.value.click();
+    const triggerFileInputClick = () => fileInputRef.value.click();
 
-    const uploadImage = (event) => {
+    const handleImageUpload = (event) => {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -152,7 +152,7 @@ export default defineComponent({
       }
     };
 
-    const saveForReview = () => {
+    const generatePreviewCanvas = () => {
       const reviewArea = document.querySelector('.review-image-area');
       const canvas = document.createElement('canvas');
 
@@ -162,13 +162,12 @@ export default defineComponent({
 
       const ctx = canvas.getContext('2d');
 
-      // bg color
+      // Background color
       ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // draw pic
+      // Draw uploaded image
       const img = reviewArea.querySelector('img');
-
       if (img) {
         const imgRect = img.getBoundingClientRect();
         const imgX = imgRect.left - rect.left;
@@ -177,25 +176,45 @@ export default defineComponent({
         ctx.drawImage(img, imgX, imgY, imgRect.width, imgRect.height);
       }
 
-      // get texts - author nd book name
+      // Add text elements (author and book title)
       const texts = reviewArea.querySelectorAll('.input-text');
       texts.forEach((textElement) => {
-        const {top, left} = textElement.getBoundingClientRect();
+        const { top, left } = textElement.getBoundingClientRect();
         const x = left - rect.left;
         const y = top - rect.top;
 
         const text = textElement.value;
         const style = getComputedStyle(textElement);
 
-        ctx.font = `${style.fontSize} ${style.fontFamily}`;
+        // Font settings
+        const fontSize = parseInt(style.fontSize, 10);
+        const fontFamily = style.fontFamily;
+        ctx.font = `${fontSize}px ${fontFamily}`;
         ctx.fillStyle = style.color;
 
-        // Metin konumunu biraz aşağı kaydırmak için font boyutunu ekliyoruz
-        ctx.fillText(text, x, y + parseInt(style.fontSize, 10));
+        // Set alignment
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+
+        // Letter spacing adjustment
+        const letterSpacing = parseFloat(style.letterSpacing) || 0;
+
+        // Positional adjustments for fine-tuning
+        const offsetX = 18;
+        const offsetY = 16;
+
+        // Draw text with letter spacing
+        let currentX = x + offsetX;
+        const adjustedY = y + offsetY;
+
+        for (const char of text) {
+          ctx.fillText(char, currentX, adjustedY);
+          currentX += ctx.measureText(char).width + letterSpacing;
+        }
       });
 
-      const dataUrl = canvas.toDataURL(); // Canvas'ı base64 formatına dönüştür
-      store.commit('books/setPreviewImgToBase64', {canvasImage: dataUrl});
+      const dataUrl = canvas.toDataURL(); // Convert canvas to base64
+      store.commit('books/setPreviewImgToBase64', { canvasImage: dataUrl });
     };
 
     return {
@@ -208,10 +227,10 @@ export default defineComponent({
       computedTitleStyle,
       computedAuthorStyle,
       activeSelectedInput,
-      openFileInput,
-      uploadImage,
-      changeActiveInputTextStyle,
-      changeActiveInput
+      triggerFileInputClick,
+      handleImageUpload,
+      updateActiveFieldTextStyle,
+      setActiveEditableField
     };
   },
 });
