@@ -16,16 +16,19 @@
       .cover-container(v-if="imgSrcLogo" )
         v-row
           v-col(cols="12" md="4")
-            text-style-editor( :font-size="textFontSize" :letter-spacing="textLetterSpacing" :text-color="textColor"
-              @update:fontSize="textFontSize = $event"
-              @update:letterSpacing="textLetterSpacing = $event"
-              @update:textColor="textColor = $event")
+            text-style-editor(
+              :font-size="textFontSize"
+              :letter-spacing="textLetterSpacing"
+              :text-color="textColor"
+              :custom-style="activeSelectedInput==='book_title'?titleTextStyle:authorTextStyle"
+              @update="changeActiveInputTextStyle"
+              )
 
           v-col(cols="12" md="8")
             .review-image-area.relative.w-100.relative
               nuxt-img.review-book-cover(:src="imgSrcLogo"  :key="imgSrcLogo")
-              drag-drop-input(v-model="bookTitle" :custom-style="textStyle" label="Book title" :initialPosition="titlePosition" @update:position="(newPos) => titlePosition = newPos")
-              drag-drop-input(v-model="bookAuthor" :custom-style="textStyle" label="Author name"  :initialPosition="authorPosition" @update:position="(newPos) => authorPosition = newPos")
+              drag-drop-input(v-model="bookTitle" :custom-style="titleTextStyle" label="Book title" :initialPosition="titlePosition" @click.native="changeActiveInput('book_title')" @update:position="(newPos) => titlePosition = newPos")
+              drag-drop-input(v-model="bookAuthor" :custom-style="authorTextStyle" label="Author name"  :initialPosition="authorPosition" @click.native="changeActiveInput('author_title')" @update:position="(newPos) => authorPosition = newPos")
 
       //- Hidden File Input
       input(ref="fileInput" type="file" accept="image/*" hidden @change="uploadImage")
@@ -33,7 +36,7 @@
 </template>
 
 <script>
-import {ref, onMounted, useContext, watch, computed, defineComponent} from '@nuxtjs/composition-api';
+import {ref, onMounted, useContext, watch, computed, defineComponent, reactive} from '@nuxtjs/composition-api';
 import DragDropInput from "~/components/draggable/drag-drop-input/drag-drop-input.vue";
 import TextStyleEditor from "~/components/editor/text-style-editor/text-style-editor.vue";
 export default defineComponent({
@@ -64,6 +67,8 @@ export default defineComponent({
 
     const bookTitle = ref(props.selectedBook.title);
     const bookAuthor = ref(props.selectedBook.author);
+    const activeDragInput=ref('book_title')
+    const activeSelectedInput=computed(()=>activeDragInput.value)
 
     const titlePosition = ref({x: 100, y: 50});
     const authorPosition = ref({x: 100, y: 150});
@@ -72,13 +77,33 @@ export default defineComponent({
     const textFontSize = ref(20);
     const textLetterSpacing = ref(1);
 
-    const textStyle = computed(() => {
-      return {
-        color: `${textColor.value} !important`,
-        fontSize: `${textFontSize.value}px`,
-        letterSpacing: `${textLetterSpacing.value}px !important`,
-      }
-    });
+    // Book title styles
+    const bookTitleStyle=reactive({
+      titleTextColor:'#000000',
+      titleFontSize:20,
+      titleLetterSpacing:1
+    })
+
+    // Book author styles
+    const bookAuthorStyle=reactive({
+      authorTextColor:'#000000',
+      authorFontSize:18,
+      authorLetterSpacing:1
+    })
+
+    // dynamic  title styles
+    const titleTextStyle = computed(() => ({
+      textColor: `${bookTitleStyle.titleTextColor}`,
+      fontSize: `${bookTitleStyle.titleFontSize}`,
+      letterSpacing: `${bookTitleStyle.titleLetterSpacing}`,
+    }));
+
+    // dynamic  author styles
+    const authorTextStyle = computed(() => ({
+      textColor: `${bookAuthorStyle.authorTextColor}`,
+      fontSize: `${bookAuthorStyle.authorFontSize}`,
+      letterSpacing: `${bookAuthorStyle.authorLetterSpacing}`,
+    }));
 
     onMounted(() => {
       store.commit('books/setNextNavigationBtn', false)
@@ -89,13 +114,28 @@ export default defineComponent({
       if (props.currentTab === 2) {
         saveForReview()
       }
-      console.log("xxx", props.currentTab)
     })
 
     watch(() => props.selectedBook, () => {
       bookTitle.value = (props.selectedBook.title);
       bookAuthor.value = (props.selectedBook.author);
     })
+
+    const changeActiveInputTextStyle=(styles)=>{
+      if(activeSelectedInput.value==='book_title'){
+        bookTitleStyle.titleTextColor =  styles.textColor
+        bookTitleStyle.titleFontSize = styles.fontSize
+        bookTitleStyle.titleLetterSpacing = styles.letterSpacing
+      }else{
+        bookAuthorStyle.authorTextColor = styles.textColor
+        bookAuthorStyle.authorFontSize =  styles.fontSize
+        bookAuthorStyle.authorLetterSpacing =styles.letterSpacing
+      }
+    }
+
+    const changeActiveInput=(inputName)=>{
+      activeDragInput.value=inputName
+    }
 
     const openFileInput = () => fileInput.value.click();
 
@@ -155,7 +195,6 @@ export default defineComponent({
       });
 
       const dataUrl = canvas.toDataURL(); // Canvas'ı base64 formatına dönüştür
-      console.log("dataUrl", dataUrl)
       store.commit('books/setPreviewImgToBase64', {canvasImage: dataUrl});
     };
 
@@ -168,9 +207,14 @@ export default defineComponent({
       authorPosition,
       textColor,
       textFontSize,
-      textLetterSpacing, textStyle,
+      textLetterSpacing,
+      titleTextStyle,
+      authorTextStyle,
+      activeSelectedInput,
       openFileInput,
       uploadImage,
+      changeActiveInputTextStyle,
+      changeActiveInput
     };
   },
 });

@@ -39,9 +39,9 @@ export default {
     const dragStart = ref({x: 0, y: 0});
 
     const textFieldStyles = computed(() => ({
-      color: props.customStyle.color,
-      fontSize: props.customStyle.fontSize,
-      letterSpacing: props.customStyle.letterSpacing
+      color: props.customStyle.textColor,
+      fontSize: props.customStyle.fontSize+'px',
+      letterSpacing: props.customStyle.letterSpacing+'px'
     }))
 
     onMounted(() => {
