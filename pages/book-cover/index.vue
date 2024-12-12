@@ -6,7 +6,7 @@
           search-dropdown.my-3(:items="bookList" @onSelected="getSelectedBook" :selectedBook="selectedBook" placeholder="Select Book to Edit Cover Page")
 
         template(v-slot:tab2="{ tabData }")
-          cover-image-add.mb-6(:selected-book="selectedBook" @isImageLoaded="isCoverImageLoaded" :current-tab="currentTab")
+          cover-image-add.mb-6(:selected-book="selectedBook" @isUploadedImageLoaded="isUploadedImageLoaded" :current-tab="currentTab")
 
         template(v-slot:tab3="{ tabData }")
           cover-image-preview
@@ -72,7 +72,7 @@ export default defineComponent({
       store.commit('books/setNextNavigationBtn', true)
     }
 
-    const isCoverImageLoaded = () => {
+    const isUploadedImageLoaded = () => {
       store.commit('books/setNextNavigationBtn', true)
     }
 
@@ -93,7 +93,7 @@ export default defineComponent({
       currentTab,
       isNextBtnValid,
       selectedBook,
-      isCoverImageLoaded,
+      isUploadedImageLoaded,
       prevTab,
       nextTab,
       getSelectedBook
