@@ -2,8 +2,12 @@
   .drag-drop-input.draggable-area.d-flex(:style="{ top: `${position.y}px`, left: `${position.x}px`}")
     v-icon.mr-1(v-text="'mdi-drag-variant'" color="red" @mousedown.prevent="startDragging")
     .input-area
-       label {{label}}
-       input.input-text(:value="value" :type="type" :style="textFieldStyles" @input="handleInput")
+      .input-area-header
+        label {{label}}
+        v-btn.delete-btn(color="error" plain @click="deleteButton")
+          v-icon(v-text="'mdi-delete-circle'" )
+      .input-area-footer
+        input.input-text(:value="value" :type="type" :style="textFieldStyles" @input="handleInput")
 </template>
 
 <script>
@@ -63,6 +67,10 @@ export default {
       emit('input', e.target.value);
     };
 
+    const deleteButton = () => {
+      emit('deleteBtn', true);
+    };
+
     const stopDragging = () => {
       if (isDragging.value) {
         emit("update:position", position.value);
@@ -84,7 +92,7 @@ export default {
       };
     };
 
-    return {position, textFieldStyles,startDragging,handleInput };
+    return {position, textFieldStyles,deleteButton, startDragging,handleInput };
   },
 };
 </script>

@@ -15,7 +15,11 @@ export default defineComponent({
   props: {
     customStyle: {
       type: Object,
-      default: ()=>{}
+      default: ()=>({
+        fontSize: 20,
+        letterSpacing: 1,
+        textColor: '#000000'
+      })
     }
   },
 

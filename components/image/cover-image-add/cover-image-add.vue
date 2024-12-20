@@ -17,21 +17,21 @@
         v-row
           v-col(cols="12" md="4")
             text-style-editor(
-              :custom-style="activeSelectedInput==='book_title'?computedTitleStyle:computedAuthorStyle"
+              :custom-style="draggableInputs[lastClickedIndex]?.style"
               @update="updateActiveFieldTextStyle"
             )
+
+            v-btn(v-text="'Add New İnput'" @click="addNewDraggableInput")
 
           v-col(cols="12" md="8")
             .review-image-area.relative.w-100.relative
               nuxt-img.review-book-cover(:src="imgSrcLogo"  :key="imgSrcLogo")
 
-              drag-drop-input(v-model="editableBookTitle" :custom-style="computedTitleStyle" label="Book title"
-                :initialPosition="titleTextPosition" @click.native="setActiveEditableField('book_title')"
-                @update:position="(newPos) => titleTextPosition = newPos")
+              template(v-for="(item, index) in draggableInputs" )
 
-              drag-drop-input(v-model="editableBookAuthor" :custom-style="computedAuthorStyle" label="Author name"
-                :initialPosition="authorTextPosition" @click.native="setActiveEditableField('author_title')"
-                @update:position="(newPos) => authorTextPosition = newPos")
+                drag-drop-input(v-model="item.text" :custom-style="item.style" label="Title"
+                  :initialPosition="item.initPosition" @click.native="setActiveSelectedInputIndex(index)"
+                  @update:position="updatePosition(index, $event)" @deleteBtn="deleteSelectedInput(index)")
 
       //- Hidden File Input
       input(ref="fileInputRef" type="file" accept="image/*" hidden @change="handleImageUpload")
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import {ref, onMounted, useContext, watch, computed, defineComponent, reactive} from '@nuxtjs/composition-api';
+import {ref, onMounted, useContext, watch, computed, defineComponent} from '@nuxtjs/composition-api';
 import DragDropInput from "~/components/draggable/drag-drop-input/drag-drop-input.vue";
 import TextStyleEditor from "~/components/editor/text-style-editor/text-style-editor.vue";
 
@@ -68,42 +68,24 @@ export default defineComponent({
     const imgSrcLogo = ref(null);
     const fileInputRef = ref(null);
     const isUploadedImageLoaded = ref(false);
+    const lastClickedIndex = ref(0)
 
     const editableBookTitle = ref(props.selectedBook.title);
     const editableBookAuthor = ref(props.selectedBook.author);
     const activeEditableField = ref('book_title')
     const activeSelectedInput = computed(() => activeEditableField.value)
 
-    const titleTextPosition = ref({x: 100, y: 50});
     const authorTextPosition = ref({x: 100, y: 150});
 
-    // Book title styles
-    const bookTitleStyle = reactive({
-      titleTextColor: '#000000',
-      titleFontSize: 20,
-      titleLetterSpacing: 1
-    })
-
-    // Book author styles
-    const bookAuthorStyle = reactive({
-      authorTextColor: '#000000',
-      authorFontSize: 18,
-      authorLetterSpacing: 1
-    })
-
-    // dynamic  title styles
-    const computedTitleStyle = computed(() => ({
-      textColor: `${bookTitleStyle.titleTextColor}`,
-      fontSize: `${bookTitleStyle.titleFontSize}`,
-      letterSpacing: `${bookTitleStyle.titleLetterSpacing}`,
-    }));
-
-    // dynamic  author styles
-    const computedAuthorStyle = computed(() => ({
-      textColor: `${bookAuthorStyle.authorTextColor}`,
-      fontSize: `${bookAuthorStyle.authorFontSize}`,
-      letterSpacing: `${bookAuthorStyle.authorLetterSpacing}`,
-    }));
+    const draggableInputs = ref([{
+      initPosition: {x: 100, y: 50},
+      text: 'Text',
+      style: {
+        fontSize: 20,
+        letterSpacing: 1,
+        textColor: '#000000'
+      }
+    }])
 
     onMounted(() => {
       store.commit('books/setNextNavigationBtn', false)
@@ -122,15 +104,7 @@ export default defineComponent({
     })
 
     const updateActiveFieldTextStyle = (styles) => {
-      if (activeSelectedInput.value === 'book_title') {
-        bookTitleStyle.titleTextColor = styles.textColor
-        bookTitleStyle.titleFontSize = styles.fontSize
-        bookTitleStyle.titleLetterSpacing = styles.letterSpacing
-      } else {
-        bookAuthorStyle.authorTextColor = styles.textColor
-        bookAuthorStyle.authorFontSize = styles.fontSize
-        bookAuthorStyle.authorLetterSpacing = styles.letterSpacing
-      }
+      draggableInputs.value[lastClickedIndex.value].style = {...styles}
     }
 
     const setActiveEditableField = (inputName) => {
@@ -179,7 +153,7 @@ export default defineComponent({
       // Add text elements (author and book title)
       const texts = reviewArea.querySelectorAll('.input-text');
       texts.forEach((textElement) => {
-        const { top, left } = textElement.getBoundingClientRect();
+        const {top, left} = textElement.getBoundingClientRect();
         const x = left - rect.left;
         const y = top - rect.top;
 
@@ -212,25 +186,61 @@ export default defineComponent({
           currentX += ctx.measureText(char).width + letterSpacing;
         }
       });
+      const dataUrl = canvas.toDataURL("image/jpeg", 1.0); // 1.0 tam kalite
 
-      const dataUrl = canvas.toDataURL(); // Convert canvas to base64
-      store.commit('books/setPreviewImgToBase64', { canvasImage: dataUrl });
+      // const dataUrl = canvas.toDataURL(); // Convert canvas to base64
+      store.commit('books/setPreviewImgToBase64', {canvasImage: dataUrl});
     };
+
+    const addNewDraggableInput = () => {
+      const inputLength = draggableInputs.value.length
+
+      draggableInputs.value.push({
+        initPosition: {
+          x: 100,
+          y: inputLength < 10 ? 50 + inputLength * 50 : 50 + 9 * 50 // if more than 10 input , create them in same point
+
+        },
+        text: 'Text',
+        style: {
+          fontSize: 20,
+          letterSpacing: 1,
+          textColor: '#000000'
+        }
+      })
+    }
+
+    const updatePosition = (index, newPos) => {
+      draggableInputs.value[index].initPosition = {...newPos}
+    }
+
+    const setActiveSelectedInputIndex = (lastSelectedIndex) => {
+      lastClickedIndex.value = lastSelectedIndex
+    }
+
+    const deleteSelectedInput = (index) => {
+      if (!draggableInputs.value.length) return;
+
+      draggableInputs.value.splice(index, 1);
+    }
 
     return {
       imgSrcLogo,
       fileInputRef,
       editableBookTitle,
       editableBookAuthor,
-      titleTextPosition,
       authorTextPosition,
-      computedTitleStyle,
-      computedAuthorStyle,
       activeSelectedInput,
+      lastClickedIndex,
+      draggableInputs,
       triggerFileInputClick,
       handleImageUpload,
       updateActiveFieldTextStyle,
-      setActiveEditableField
+      setActiveEditableField,
+      addNewDraggableInput,
+      updatePosition,
+      deleteSelectedInput,
+      setActiveSelectedInputIndex
     };
   },
 });
