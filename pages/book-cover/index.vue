@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import {defineComponent, useContext, ref, computed, useFetch} from '@nuxtjs/composition-api';
+import {defineComponent, useContext, ref, computed, useFetch, onMounted} from '@nuxtjs/composition-api';
 import AppTab from '~/components/tabs/app-tab/app-tab.vue';
 import SearchDropdown from "~/components/dropdown/search-dropdown/search-dropdown.vue";
 import NavigationButtons from "~/components/buttons/navigation-buttons/navigation-buttons.vue";
@@ -58,6 +58,12 @@ export default defineComponent({
         await fetchBookList()
       }
     });
+
+    onMounted(async () => {
+      if (!bookList.value.length) {
+        await fetchBookList()
+      }
+    })
 
     const fetchBookList = async () => {
       try {

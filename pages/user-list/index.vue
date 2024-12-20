@@ -71,6 +71,10 @@ export default {
       await getUserList()
     });
 
+    onMounted(async () => {
+      await getUserList()
+    })
+
     const getUserList = async () => {
       try {
         await store.dispatch('users/getUsers')
