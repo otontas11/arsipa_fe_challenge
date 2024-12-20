@@ -14,24 +14,25 @@
           v-icon(right dark v-text="'mdi-cloud-upload'")
 
       .cover-container(v-if="imgSrcLogo" )
+
         v-row
           v-col(cols="12" md="4")
+            .input-text-btn.text-center.mt-2
+              v-btn(v-text="'Add New Textİnput'" outlined rounded color="indigo" @click="addNewDraggableInput")
             text-style-editor(
               :custom-style="draggableInputs[lastClickedIndex]?.style"
               @update="updateActiveFieldTextStyle"
             )
-
-            v-btn(v-text="'Add New İnput'" @click="addNewDraggableInput")
 
           v-col(cols="12" md="8")
             .review-image-area.relative.w-100.relative
               nuxt-img.review-book-cover(:src="imgSrcLogo"  :key="imgSrcLogo")
 
               template(v-for="(item, index) in draggableInputs" )
-
-                drag-drop-input(v-model="item.text" :custom-style="item.style" label="Title"
-                  :initialPosition="item.initPosition" @click.native="setActiveSelectedInputIndex(index)"
-                  @update:position="updatePosition(index, $event)" @deleteBtn="deleteSelectedInput(index)")
+                drag-drop-input(v-model="item.text" :key="item.initialPosition.x + '-' + item.initialPosition.y"
+                  :item="item" :index-id="index" :label="`Title-${index+1}`"
+                  @click.native="setActiveSelectedInputIndex(index)" @update:position="updatePosition(index, $event)"
+                  @deleteBtn="deleteSelectedInput")
 
       //- Hidden File Input
       input(ref="fileInputRef" type="file" accept="image/*" hidden @change="handleImageUpload")
@@ -74,11 +75,9 @@ export default defineComponent({
     const editableBookAuthor = ref(props.selectedBook.author);
     const activeEditableField = ref('book_title')
     const activeSelectedInput = computed(() => activeEditableField.value)
-
-    const authorTextPosition = ref({x: 100, y: 150});
-
+    
     const draggableInputs = ref([{
-      initPosition: {x: 100, y: 50},
+      initialPosition: {x: 100, y: 50},
       text: 'Text',
       style: {
         fontSize: 20,
@@ -196,10 +195,9 @@ export default defineComponent({
       const inputLength = draggableInputs.value.length
 
       draggableInputs.value.push({
-        initPosition: {
+        initialPosition: {
           x: 100,
-          y: inputLength < 10 ? 50 + inputLength * 50 : 50 + 9 * 50 // if more than 10 input , create them in same point
-
+          y: inputLength < 10 ? 50 + inputLength * 50 : 50 + 9 * 50 // if more than 10 input , create them in same area
         },
         text: 'Text',
         style: {
@@ -211,7 +209,7 @@ export default defineComponent({
     }
 
     const updatePosition = (index, newPos) => {
-      draggableInputs.value[index].initPosition = {...newPos}
+      draggableInputs.value[index].initialPosition = {...newPos}
     }
 
     const setActiveSelectedInputIndex = (lastSelectedIndex) => {
@@ -219,17 +217,18 @@ export default defineComponent({
     }
 
     const deleteSelectedInput = (index) => {
-      if (!draggableInputs.value.length) return;
+      if (index < 0 || index >= draggableInputs.value.length) {
+        return;
+      }
 
-      draggableInputs.value.splice(index, 1);
-    }
+      draggableInputs.value.splice(index,1)
+    };
 
     return {
       imgSrcLogo,
       fileInputRef,
       editableBookTitle,
       editableBookAuthor,
-      authorTextPosition,
       activeSelectedInput,
       lastClickedIndex,
       draggableInputs,

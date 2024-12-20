@@ -8,6 +8,7 @@
           v-icon(v-text="'mdi-delete-circle'" )
       .input-area-footer
         input.input-text(:value="value" :type="type" :style="textFieldStyles" @input="handleInput")
+        b {{position}}
 </template>
 
 <script>
@@ -16,11 +17,7 @@ import {ref, onMounted, onUnmounted, computed } from '@nuxtjs/composition-api';
 export default {
   name: "DragDrop",
   props: {
-    initialPosition: {
-      type: Object,
-      default: () => ({ x: 0, y: 0 }),
-    },
-    customStyle: {
+    item: {
       type: Object,
       default: () => {},
     },
@@ -34,18 +31,22 @@ export default {
     },
     label: {
       type: String,
-      default: 'text',
+      default: 'Text',
+    },
+    indexId: {
+      type: Number,
+      default: 0,
     },
   },
   setup(props, { emit }) {
-    const position = ref({...props.initialPosition});
+    const position = ref({...props.item.initialPosition});
     const isDragging = ref(false);
     const dragStart = ref({x: 0, y: 0});
 
     const textFieldStyles = computed(() => ({
-      color: props.customStyle.textColor,
-      fontSize: props.customStyle.fontSize+'px',
-      letterSpacing: props.customStyle.letterSpacing+'px'
+      color: props.item.style.textColor,
+      fontSize: props.item.style.fontSize+'px',
+      letterSpacing: props.item.style.letterSpacing+'px'
     }))
 
     onMounted(() => {
@@ -68,7 +69,7 @@ export default {
     };
 
     const deleteButton = () => {
-      emit('deleteBtn', true);
+      emit('deleteBtn', props.indexId);
     };
 
     const stopDragging = () => {
